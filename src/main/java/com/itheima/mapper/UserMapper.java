@@ -19,4 +19,7 @@ public interface UserMapper {
 
     @Update("update user set nickname = #{nickname},email = #{email},user_pic = #{userPic},update_time = now() where id = #{id}")
     void update(User user);
+
+    @Update("update user set user_pic = #{avatarUrl},update_time = now() where id = #{id}")
+    void updateAvatar(String avatarUrl,Integer id);
 }
