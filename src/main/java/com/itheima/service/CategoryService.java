@@ -1,6 +1,7 @@
 package com.itheima.service;
 
 import com.itheima.pojo.Category;
+import com.itheima.pojo.Result;
 
 import java.util.List;
 
@@ -13,4 +14,7 @@ public interface CategoryService {
 
     //根据id查询
     Category findById(Integer id);
+
+    //更新分类
+    void update(Category category);
 }
