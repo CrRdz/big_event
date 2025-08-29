@@ -58,7 +58,7 @@ public class UserController {
     }
 
     @GetMapping("/userInfo")
-    public Result<User> info(@RequestHeader(name = "Authorization") String token){
+    public Result<User> info(){
         //1.根据用户名查询用户
         Map<String, Object> map = ThreadLocalUtil.get();
         String username = (String) map.get("username");
