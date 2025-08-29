@@ -1,6 +1,9 @@
 package com.itheima.service;
 
+import com.itheima.pojo.Result;
 import com.itheima.pojo.User;
+
+import java.util.Map;
 
 public interface UserService {
 
@@ -17,5 +20,5 @@ public interface UserService {
     void updateAvatar(String avatarUrl);
 
     //更新用户密码
-    void updatePwd(String newPwd);
+    Result<?> validateAndUpdatePwd(Map<String, String> params);
 }
