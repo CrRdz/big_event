@@ -7,6 +7,7 @@ import com.itheima.service.UserService;
 import com.itheima.utils.Md5Util;
 import com.itheima.utils.ThreadLocalUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
@@ -18,6 +19,9 @@ public class UserServiceImpl implements UserService {
 
     @Autowired
     private UserMapper userMapper;
+    @Autowired
+    private StringRedisTemplate stringRedisTemplate;
+
     @Override
     public User findByUsername(String username) {
         User u = userMapper.findByUsername(username);
@@ -45,7 +49,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public Result<?> validateAndUpdatePwd(Map<String, String> params) {
+    public Result<?> validateAndUpdatePwd(Map<String, String> params, String token) {
         String oldPwd = params.get("old_pwd");
         String newPwd = params.get("new_pwd");
         String rePwd = params.get("re_pwd");
@@ -66,6 +70,8 @@ public class UserServiceImpl implements UserService {
         }
 
         updatePwd(newPwd);
+        //删除redis中对应的token
+        stringRedisTemplate.opsForValue().getOperations().delete(token);
         return Result.success();
     }
 

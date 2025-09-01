@@ -9,11 +9,14 @@ import com.itheima.utils.ThreadLocalUtil;
 import jakarta.validation.constraints.Pattern;
 import org.hibernate.validator.constraints.URL;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.StringRedisTemplate;
+import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 @RestController
 @RequestMapping("/user")
@@ -22,6 +25,9 @@ public class UserController {
 
     @Autowired
     private UserService userService;
+    @Autowired
+    private StringRedisTemplate stringRedisTemplate;
+
     @PostMapping("/register")
     public Result register(@Pattern(regexp = "^\\S{5,16}$")String username, @Pattern(regexp = "^\\S{5,16}$")String password){
         //1.查询用户
@@ -51,6 +57,9 @@ public class UserController {
             claims.put("id", loginUser.getId());
             claims.put("username", loginUser.getUsername());
             String token = JwtUtil.genToken(claims);
+            //把token存储到redis中
+            ValueOperations<String, String> operations = stringRedisTemplate.opsForValue();
+            operations.set(token,token,1, TimeUnit.HOURS);//设置token的有效期为1天
             return Result.success(token);
         }
 
@@ -80,7 +89,7 @@ public class UserController {
     }
 
     @PatchMapping("/updatePwd")
-    public Result<?> updatePwd(@RequestBody Map<String,String> params){
-        return userService.validateAndUpdatePwd(params);
+    public Result<?> updatePwd(@RequestBody Map<String,String> params,@RequestHeader("Authorization") String token){
+        return userService.validateAndUpdatePwd(params,token);
     }
 }

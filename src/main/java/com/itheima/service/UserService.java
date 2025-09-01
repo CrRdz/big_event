@@ -20,5 +20,5 @@ public interface UserService {
     void updateAvatar(String avatarUrl);
 
     //更新用户密码
-    Result<?> validateAndUpdatePwd(Map<String, String> params);
+    Result<?> validateAndUpdatePwd(Map<String, String> params,String  token);
 }
